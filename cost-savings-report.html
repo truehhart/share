@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Cloud Cost Savings Report — FY2026</title>
+    <meta name="color-scheme" content="dark" />
+    <style>
+      :root {
+        --bg: #0a0c10;
+        --bg-soft: #11141b;
+        --panel: #0f1218;
+        --border: #1e2430;
+        --border-hi: #2b3342;
+        --fg: #d7dde7;
+        --fg-dim: #8b94a3;
+        --fg-faint: #5b6373;
+        --accent: #7ee787;
+        --accent-2: #58a6ff;
+        --accent-3: #d2a8ff;
+        --amber: #f0b429;
+        --radius: 12px;
+        --mono:
+          ui-monospace, "SF Mono", "JetBrains Mono", "Fira Code", Menlo,
+          Consolas, monospace;
+        --sans:
+          ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+          Helvetica, Arial, sans-serif;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: var(--sans);
+        color: var(--fg);
+        background:
+          radial-gradient(900px 500px at 80% -10%, rgba(126, 231, 135, 0.1), transparent 60%),
+          radial-gradient(700px 400px at 0% 0%, rgba(88, 166, 255, 0.08), transparent 55%),
+          var(--bg);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+      }
+      .wrap { max-width: 920px; margin: 0 auto; padding: 0 24px; }
+      header.bar {
+        position: sticky; top: 0; z-index: 10;
+        backdrop-filter: blur(10px);
+        background: rgba(10, 12, 16, 0.72);
+        border-bottom: 1px solid var(--border);
+      }
+      .bar-inner {
+        display: flex; align-items: center; justify-content: space-between;
+        max-width: 920px; margin: 0 auto; padding: 12px 24px;
+      }
+      .brand { font-family: var(--mono); font-weight: 700; font-size: 1rem; letter-spacing: -0.02em; }
+      .brand .prompt { color: var(--accent); }
+      .bar-links { display: flex; gap: 18px; font-size: 0.9rem; color: var(--fg-dim); font-family: var(--mono); }
+
+      .hero { padding: 64px 0 36px; }
+      .badge {
+        display: inline-flex; align-items: center; gap: 8px;
+        font-family: var(--mono); font-size: 0.78rem; color: var(--fg-dim);
+        border: 1px solid var(--border-hi); border-radius: 999px;
+        padding: 5px 12px; margin-bottom: 26px;
+      }
+      .badge .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 8px var(--accent); }
+      h1 { font-size: clamp(2.2rem, 6vw, 3.4rem); line-height: 1.04; margin: 0 0 14px; letter-spacing: -0.04em; font-weight: 800; }
+      h1 .up {
+        background: linear-gradient(120deg, var(--accent), var(--accent-2) 60%, var(--accent-3));
+        -webkit-background-clip: text; background-clip: text; color: transparent;
+      }
+      .pitch { font-size: clamp(1.05rem, 2.4vw, 1.3rem); color: var(--fg-dim); margin: 0 0 28px; }
+      .facts { display: flex; flex-wrap: wrap; gap: 28px; font-size: 0.9rem; }
+      .facts .k { display: block; font-family: var(--mono); color: var(--fg-faint); font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 2px; }
+
+      section { padding: 48px 0; border-top: 1px solid var(--border); }
+      h2 { font-size: 1.6rem; letter-spacing: -0.02em; margin: 0 0 8px; }
+      h2 .hash { color: var(--accent); font-family: var(--mono); font-weight: 700; }
+      .lead { color: var(--fg-dim); margin: 0 0 28px; max-width: 60ch; }
+
+      .headline {
+        border: 1px solid var(--border); border-radius: var(--radius);
+        background: linear-gradient(180deg, rgba(126, 231, 135, 0.06), var(--panel));
+        padding: 34px 36px; display: flex; justify-content: space-between;
+        align-items: center; flex-wrap: wrap; gap: 24px;
+      }
+      .headline .big { font-size: clamp(2.6rem, 7vw, 4rem); font-weight: 800; line-height: 1; }
+      .headline .big .u { color: var(--accent); }
+      .headline .sub { font-family: var(--mono); font-size: 0.82rem; color: var(--fg-dim); margin-top: 10px; }
+      .headline .right { text-align: right; }
+      .headline .right .l { font-family: var(--mono); font-size: 0.74rem; color: var(--fg-faint); text-transform: uppercase; letter-spacing: 0.04em; }
+      .headline .right .v { font-size: 2rem; font-weight: 700; }
+
+      .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+      .stat {
+        border: 1px solid var(--border); border-radius: var(--radius);
+        background: linear-gradient(180deg, var(--bg-soft), var(--panel));
+        padding: 22px; transition: border-color 0.15s ease, transform 0.15s ease;
+      }
+      .stat:hover { border-color: var(--border-hi); transform: translateY(-2px); }
+      .stat .v { font-size: 1.9rem; font-weight: 700; }
+      .stat .l { color: var(--fg-dim); font-size: 0.88rem; margin-top: 4px; }
+      .stat .d { font-family: var(--mono); font-size: 0.78rem; margin-top: 10px; }
+      .d.up { color: var(--accent); }
+      .d.flat { color: var(--fg-faint); }
+
+      .chart { border: 1px solid var(--border); border-radius: var(--radius); background: var(--panel); padding: 28px; }
+      .cols { display: flex; align-items: flex-end; gap: 22px; height: 220px; }
+      .col { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; }
+      .col .bars { display: flex; gap: 6px; align-items: flex-end; height: 100%; width: 100%; justify-content: center; }
+      .col .b { width: 24px; border-radius: 6px 6px 0 0; }
+      .b.before { background: var(--border-hi); }
+      .b.after { background: linear-gradient(180deg, var(--accent), #4eb45a); }
+      .col .m { margin-top: 10px; font-family: var(--mono); font-size: 0.78rem; color: var(--fg-dim); }
+      .legend { display: flex; gap: 22px; margin-top: 20px; font-family: var(--mono); font-size: 0.8rem; color: var(--fg-dim); }
+      .legend span { display: inline-flex; align-items: center; gap: 7px; }
+      .ld { width: 12px; height: 12px; border-radius: 4px; display: inline-block; }
+
+      .tbl { border: 1px solid var(--border); border-radius: var(--radius); background: var(--panel); overflow: hidden; }
+      table { width: 100%; border-collapse: collapse; }
+      th, td { text-align: left; padding: 13px 18px; font-size: 0.9rem; border-bottom: 1px solid var(--border); }
+      th { background: var(--bg-soft); color: var(--fg-faint); font-family: var(--mono); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em; }
+      td.r, th.r { text-align: right; font-family: var(--mono); }
+      tr:last-child td { border-bottom: none; font-weight: 700; background: rgba(126, 231, 135, 0.05); }
+      .save { color: var(--accent); }
+
+      footer { padding: 36px 0 60px; border-top: 1px solid var(--border); color: var(--fg-faint); font-size: 0.85rem; }
+      footer .frow { display: flex; flex-wrap: wrap; gap: 14px; justify-content: space-between; align-items: center; }
+      footer code { font-family: var(--mono); color: var(--fg-dim); }
+
+      @media (max-width: 680px) {
+        .stats { grid-template-columns: 1fr; }
+        .col .b { width: 16px; }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="bar">
+      <div class="bar-inner">
+        <span class="brand"><span class="prompt">$ </span>cost-savings</span>
+        <nav class="bar-links" aria-label="Primary">
+          <span>FinOps · FY2026</span>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero" style="border-top: none">
+        <div class="wrap">
+          <h1>Cost <span class="up">Savings</span></h1>
+          <p class="pitch">Optimization results across all business units for fiscal year 2026.</p>
+          <div class="facts">
+            <div><span class="k">Period</span>Jan – Jun 2026</div>
+            <div><span class="k">Owner</span>Cloud FinOps Team</div>
+            <div><span class="k">Provider</span>AWS (multi-account)</div>
+            <div><span class="k">Status</span><span style="color: var(--accent); font-weight: 600">On track</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="headline">
+        <div class="wrap">
+          <h2><span class="hash">#</span> Headline result</h2>
+          <p class="lead">A 31% reduction in total cloud spend through rightsizing, reserved capacity, and waste elimination.</p>
+          <div class="headline">
+            <div>
+              <div class="big"><span class="u">$2.4M</span> saved / yr</div>
+              <div class="sub">$7.6M → $5.2M annualized run-rate</div>
+            </div>
+            <div class="right">
+              <div class="l">Payback period</div>
+              <div class="v">4.2 months</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="stats">
+        <div class="wrap">
+          <h2><span class="hash">#</span> At a glance</h2>
+          <p class="lead">Spend movement and the operational changes driving it.</p>
+          <div class="stats">
+            <div class="stat"><div class="v">$7.6M</div><div class="l">Annual spend — before</div><div class="d flat">baseline</div></div>
+            <div class="stat"><div class="v">$5.2M</div><div class="l">Annual spend — after</div><div class="d up">▼ 31% reduction</div></div>
+            <div class="stat"><div class="v">142</div><div class="l">Resources rightsized</div><div class="d up">▲ 38 idle terminated</div></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="trend">
+        <div class="wrap">
+          <h2><span class="hash">#</span> Monthly spend — before vs. after</h2>
+          <p class="lead">Side-by-side run-rate per month as optimizations landed through H1.</p>
+          <div class="chart">
+            <div class="cols">
+              <div class="col"><div class="bars"><div class="b before" style="height:90%"></div><div class="b after" style="height:62%"></div></div><div class="m">Jan</div></div>
+              <div class="col"><div class="bars"><div class="b before" style="height:88%"></div><div class="b after" style="height:60%"></div></div><div class="m">Feb</div></div>
+              <div class="col"><div class="bars"><div class="b before" style="height:95%"></div><div class="b after" style="height:58%"></div></div><div class="m">Mar</div></div>
+              <div class="col"><div class="bars"><div class="b before" style="height:92%"></div><div class="b after" style="height:55%"></div></div><div class="m">Apr</div></div>
+              <div class="col"><div class="bars"><div class="b before" style="height:97%"></div><div class="b after" style="height:52%"></div></div><div class="m">May</div></div>
+              <div class="col"><div class="bars"><div class="b before" style="height:100%"></div><div class="b after" style="height:48%"></div></div><div class="m">Jun</div></div>
+            </div>
+            <div class="legend">
+              <span><i class="ld" style="background:var(--border-hi)"></i> Before optimization</span>
+              <span><i class="ld" style="background:var(--accent)"></i> After optimization</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="byservice">
+        <div class="wrap">
+          <h2><span class="hash">#</span> Savings by service</h2>
+          <p class="lead">Monthly run-rate per service line, before and after the initiative.</p>
+          <div class="tbl">
+            <table>
+              <thead><tr><th>Service</th><th class="r">Before / mo</th><th class="r">After / mo</th><th class="r">Savings</th></tr></thead>
+              <tbody>
+                <tr><td>EC2 / Compute</td><td class="r">$284,000</td><td class="r">$176,000</td><td class="r save">38%</td></tr>
+                <tr><td>RDS / Databases</td><td class="r">$142,000</td><td class="r">$108,000</td><td class="r save">24%</td></tr>
+                <tr><td>S3 / Storage</td><td class="r">$96,000</td><td class="r">$61,000</td><td class="r save">36%</td></tr>
+                <tr><td>Data Transfer</td><td class="r">$71,000</td><td class="r">$52,000</td><td class="r save">27%</td></tr>
+                <tr><td>Lambda &amp; Serverless</td><td class="r">$38,000</td><td class="r">$33,000</td><td class="r save">13%</td></tr>
+                <tr><td>Total</td><td class="r">$631,000</td><td class="r">$430,000</td><td class="r save">32%</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="wrap frow">
+        <span>Prepared by <code>Cloud FinOps</code></span>
+        <span>Mock document — demonstration purposes only.</span>
+      </div>
+    </footer>
+  </body>
+</html>

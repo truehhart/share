@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Migration Plan — Project Atlas</title>
+    <meta name="color-scheme" content="dark" />
+    <style>
+      :root {
+        --bg: #0a0c10;
+        --bg-soft: #11141b;
+        --panel: #0f1218;
+        --border: #1e2430;
+        --border-hi: #2b3342;
+        --fg: #d7dde7;
+        --fg-dim: #8b94a3;
+        --fg-faint: #5b6373;
+        --accent: #7ee787;
+        --accent-2: #58a6ff;
+        --accent-3: #d2a8ff;
+        --amber: #f0b429;
+        --done: #7ee787;
+        --active: #f0b429;
+        --pending: #5b6373;
+        --radius: 12px;
+        --mono:
+          ui-monospace, "SF Mono", "JetBrains Mono", "Fira Code", Menlo,
+          Consolas, monospace;
+        --sans:
+          ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+          Helvetica, Arial, sans-serif;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: var(--sans);
+        color: var(--fg);
+        background:
+          radial-gradient(900px 500px at 80% -10%, rgba(210, 168, 255, 0.1), transparent 60%),
+          radial-gradient(700px 400px at 0% 0%, rgba(88, 166, 255, 0.08), transparent 55%),
+          var(--bg);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+      }
+      .wrap { max-width: 920px; margin: 0 auto; padding: 0 24px; }
+      header.bar {
+        position: sticky; top: 0; z-index: 10;
+        backdrop-filter: blur(10px);
+        background: rgba(10, 12, 16, 0.72);
+        border-bottom: 1px solid var(--border);
+      }
+      .bar-inner {
+        display: flex; align-items: center; justify-content: space-between;
+        max-width: 920px; margin: 0 auto; padding: 12px 24px;
+      }
+      .brand { font-family: var(--mono); font-weight: 700; font-size: 1rem; letter-spacing: -0.02em; }
+      .brand .prompt { color: var(--accent); }
+      .bar-links { display: flex; gap: 18px; font-size: 0.9rem; color: var(--fg-dim); font-family: var(--mono); }
+
+      .hero { padding: 64px 0 36px; }
+      .badge {
+        display: inline-flex; align-items: center; gap: 8px;
+        font-family: var(--mono); font-size: 0.78rem; color: var(--fg-dim);
+        border: 1px solid var(--border-hi); border-radius: 999px;
+        padding: 5px 12px; margin-bottom: 26px;
+      }
+      .badge .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent-3); box-shadow: 0 0 8px var(--accent-3); }
+      h1 { font-size: clamp(2.2rem, 6vw, 3.4rem); line-height: 1.04; margin: 0 0 14px; letter-spacing: -0.04em; font-weight: 800; }
+      h1 .up {
+        background: linear-gradient(120deg, var(--accent-3), var(--accent-2) 60%, var(--accent));
+        -webkit-background-clip: text; background-clip: text; color: transparent;
+      }
+      .pitch { font-size: clamp(1.05rem, 2.4vw, 1.3rem); color: var(--fg-dim); margin: 0 0 28px; }
+      .facts { display: flex; flex-wrap: wrap; gap: 28px; font-size: 0.9rem; }
+      .facts .k { display: block; font-family: var(--mono); color: var(--fg-faint); font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 2px; }
+
+      section { padding: 48px 0; border-top: 1px solid var(--border); }
+      h2 { font-size: 1.6rem; letter-spacing: -0.02em; margin: 0 0 8px; }
+      h2 .hash { color: var(--accent); font-family: var(--mono); font-weight: 700; }
+      .lead { color: var(--fg-dim); margin: 0 0 28px; max-width: 60ch; }
+
+      .progress-meta { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 0.85rem; margin-bottom: 10px; color: var(--fg-dim); }
+      .progress-track { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 20px; height: 14px; overflow: hidden; }
+      .progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent-3), var(--accent-2)); border-radius: 20px; width: 58%; }
+
+      .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+      .kpi {
+        border: 1px solid var(--border); border-radius: var(--radius);
+        background: linear-gradient(180deg, var(--bg-soft), var(--panel));
+        padding: 22px; text-align: center;
+        transition: border-color 0.15s ease, transform 0.15s ease;
+      }
+      .kpi:hover { border-color: var(--border-hi); transform: translateY(-2px); }
+      .kpi .v { font-size: 2rem; font-weight: 800; color: var(--accent-3); line-height: 1; }
+      .kpi .l { font-family: var(--mono); font-size: 0.76rem; color: var(--fg-dim); margin-top: 8px; text-transform: uppercase; letter-spacing: 0.04em; }
+
+      .timeline { position: relative; padding-left: 38px; }
+      .timeline::before { content: ""; position: absolute; left: 11px; top: 8px; bottom: 8px; width: 2px; background: var(--border); }
+      .phase { position: relative; margin-bottom: 22px; }
+      .phase .node { position: absolute; left: -32px; top: 4px; width: 20px; height: 20px; border-radius: 50%; border: 3px solid var(--bg); }
+      .node.done { background: var(--done); box-shadow: 0 0 0 2px var(--done), 0 0 10px rgba(126,231,135,0.4); }
+      .node.active { background: var(--active); box-shadow: 0 0 0 2px var(--active), 0 0 10px rgba(240,180,41,0.4); }
+      .node.pending { background: var(--bg-soft); box-shadow: 0 0 0 2px var(--pending); }
+      .phase-card {
+        border: 1px solid var(--border); border-radius: var(--radius);
+        background: linear-gradient(180deg, var(--bg-soft), var(--panel));
+        padding: 18px 22px; transition: border-color 0.15s ease;
+      }
+      .phase-card:hover { border-color: var(--border-hi); }
+      .phase-head { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
+      .phase-head h3 { font-size: 1.08rem; margin: 0; }
+      .when { font-family: var(--mono); font-size: 0.78rem; color: var(--fg-faint); }
+      .status { font-family: var(--mono); font-size: 0.66rem; font-weight: 700; padding: 4px 10px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.05em; }
+      .status.done { background: rgba(126, 231, 135, 0.14); color: var(--done); }
+      .status.active { background: rgba(240, 180, 41, 0.14); color: var(--active); }
+      .status.pending { background: rgba(91, 99, 115, 0.18); color: var(--fg-dim); }
+      .phase-card p { color: var(--fg-dim); font-size: 0.92rem; margin: 10px 0 0; }
+      .tags { margin-top: 14px; display: flex; gap: 8px; flex-wrap: wrap; }
+      .tag { font-family: var(--mono); font-size: 0.72rem; background: var(--bg); color: var(--accent-3); border: 1px solid var(--border-hi); padding: 3px 9px; border-radius: 6px; }
+
+      .risks { border: 1px solid var(--border); border-radius: var(--radius); background: var(--panel); padding: 6px 22px; }
+      .risk { display: flex; align-items: center; gap: 14px; padding: 14px 0; border-bottom: 1px solid var(--border); font-size: 0.92rem; }
+      .risk:last-child { border-bottom: none; }
+      .lvl { font-family: var(--mono); font-size: 0.66rem; font-weight: 700; padding: 3px 9px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.04em; min-width: 64px; text-align: center; }
+      .lvl.high { background: rgba(255, 107, 99, 0.14); color: #ff6b63; }
+      .lvl.med { background: rgba(240, 180, 41, 0.14); color: var(--amber); }
+      .lvl.low { background: rgba(126, 231, 135, 0.14); color: var(--accent); }
+
+      footer { padding: 36px 0 60px; border-top: 1px solid var(--border); color: var(--fg-faint); font-size: 0.85rem; }
+      footer .frow { display: flex; flex-wrap: wrap; gap: 14px; justify-content: space-between; align-items: center; }
+      footer code { font-family: var(--mono); color: var(--fg-dim); }
+
+      @media (max-width: 680px) {
+        .kpis { grid-template-columns: 1fr 1fr; }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="bar">
+      <div class="bar-inner">
+        <span class="brand"><span class="prompt">$ </span>migration-plan</span>
+        <nav class="bar-links" aria-label="Primary">
+          <span>Project Atlas</span>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero" style="border-top: none">
+        <div class="wrap">
+          <h1>Migration <span class="up">Plan</span></h1>
+          <p class="pitch">Monolith → microservices decomposition for Project Atlas.</p>
+          <div class="facts">
+            <div><span class="k">Timeline</span>Jan – Sep 2026</div>
+            <div><span class="k">Owner</span>Platform Eng</div>
+            <div><span class="k">Strategy</span>Strangler Fig</div>
+            <div><span class="k">Status</span><span style="color: var(--active); font-weight: 600">Phase 3 in progress</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="progress">
+        <div class="wrap">
+          <h2><span class="hash">#</span> Overall progress</h2>
+          <p class="lead">Two of four phases complete with zero production downtime to date.</p>
+          <div class="progress-meta"><span>58% complete</span><span>on track</span></div>
+          <div class="progress-track"><div class="progress-fill"></div></div>
+          <div style="height: 24px"></div>
+          <div class="kpis">
+            <div class="kpi"><div class="v">4</div><div class="l">Phases</div></div>
+            <div class="kpi"><div class="v">9 mo</div><div class="l">Timeline</div></div>
+            <div class="kpi"><div class="v">12</div><div class="l">Services</div></div>
+            <div class="kpi"><div class="v">0</div><div class="l">Downtime hrs</div></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="phases">
+        <div class="wrap">
+          <h2><span class="hash">#</span> Phased rollout</h2>
+          <p class="lead">Incremental decomposition behind a strangler proxy — each phase ships independently with rollback safety.</p>
+          <div class="timeline">
+            <div class="phase">
+              <div class="node done"></div>
+              <div class="phase-card">
+                <div class="phase-head"><h3>Phase 1 — Foundation &amp; Strangler Fig</h3><span class="status done">Complete</span></div>
+                <span class="when">Jan – Feb 2026</span>
+                <p>Stood up the API gateway, set up the service mesh, and routed legacy traffic through the strangler proxy. Established CI/CD and observability baseline.</p>
+                <div class="tags"><span class="tag">API Gateway</span><span class="tag">Istio</span><span class="tag">Observability</span></div>
+              </div>
+            </div>
+            <div class="phase">
+              <div class="node done"></div>
+              <div class="phase-card">
+                <div class="phase-head"><h3>Phase 2 — Extract Edge Services</h3><span class="status done">Complete</span></div>
+                <span class="when">Mar – Apr 2026</span>
+                <p>Carved out authentication, notifications, and search into independent services. Introduced an event bus for async communication.</p>
+                <div class="tags"><span class="tag">Auth Service</span><span class="tag">Kafka</span><span class="tag">Search</span></div>
+              </div>
+            </div>
+            <div class="phase">
+              <div class="node active"></div>
+              <div class="phase-card">
+                <div class="phase-head"><h3>Phase 3 — Core Domain Decomposition</h3><span class="status active">In Progress</span></div>
+                <span class="when">May – Jul 2026</span>
+                <p>Splitting the order, billing, and inventory domains. Migrating to per-service databases with dual-write during the transition.</p>
+                <div class="tags"><span class="tag">Orders</span><span class="tag">Billing</span><span class="tag">Inventory</span><span class="tag">DB-per-service</span></div>
+              </div>
+            </div>
+            <div class="phase">
+              <div class="node pending"></div>
+              <div class="phase-card">
+                <div class="phase-head"><h3>Phase 4 — Decommission Monolith</h3><span class="status pending">Pending</span></div>
+                <span class="when">Aug – Sep 2026</span>
+                <p>Cut over remaining traffic, retire the legacy codebase, and finalize cost optimization on the new platform.</p>
+                <div class="tags"><span class="tag">Cutover</span><span class="tag">Decommission</span><span class="tag">Cost Tuning</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="risks">
+        <div class="wrap">
+          <h2><span class="hash">#</span> Risk register</h2>
+          <p class="lead">Active risks tracked through the decomposition, with mitigations in flight.</p>
+          <div class="risks">
+            <div class="risk"><span class="lvl high">High</span><span>Data consistency during the dual-write window for the billing domain.</span></div>
+            <div class="risk"><span class="lvl med">Medium</span><span>Team ramp-up on distributed tracing and cross-service debugging.</span></div>
+            <div class="risk"><span class="lvl med">Medium</span><span>Increased network latency between chatty services.</span></div>
+            <div class="risk"><span class="lvl low">Low</span><span>Gateway as a single point of failure — mitigated by HA deployment.</span></div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="wrap frow">
+        <span><code>Project Atlas</code> · Platform Engineering</span>
+        <span>Mock document — demonstration purposes only.</span>
+      </div>
+    </footer>
+  </body>
+</html>
