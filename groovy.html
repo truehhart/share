@@ -1,0 +1,112 @@
+<title>Yeah Baby!</title>
+<style>
+  :root {
+    --hot-pink: #ff2e93;
+    --electric: #00e5ff;
+    --mustard: #ffd23f;
+    --grape: #6a0dad;
+    --cream: #fff8e7;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: 'Helvetica Neue', system-ui, sans-serif;
+    background:
+      radial-gradient(circle at 20% 30%, var(--hot-pink) 0%, transparent 40%),
+      radial-gradient(circle at 80% 70%, var(--electric) 0%, transparent 40%),
+      radial-gradient(circle at 50% 100%, var(--mustard) 0%, transparent 50%),
+      var(--grape);
+    color: var(--cream);
+    padding: 3rem 1.5rem;
+  }
+  .wrap { max-width: 900px; margin: 0 auto; }
+  h1 {
+    font-size: clamp(2.5rem, 7vw, 5rem);
+    margin: 0 0 0.25em;
+    letter-spacing: -0.03em;
+    text-shadow: 4px 4px 0 var(--grape);
+  }
+  .sub {
+    font-size: 1.2rem;
+    opacity: 0.85;
+    margin-bottom: 2.5rem;
+    font-style: italic;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.25rem;
+  }
+  .card {
+    background: rgba(255, 248, 231, 0.12);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 248, 231, 0.25);
+    border-radius: 18px;
+    padding: 1.5rem;
+    transition: transform 0.2s ease;
+  }
+  .card:hover { transform: translateY(-4px) rotate(-1deg); }
+  .card h2 {
+    margin: 0 0 0.5rem;
+    font-size: 1.3rem;
+    color: var(--mustard);
+  }
+  .card p { margin: 0; line-height: 1.5; opacity: 0.9; }
+  .emoji { font-size: 2rem; display: block; margin-bottom: 0.5rem; }
+  .quote {
+    margin-top: 3rem;
+    padding: 1.5rem 2rem;
+    border-left: 5px solid var(--hot-pink);
+    background: rgba(0, 0, 0, 0.25);
+    border-radius: 0 12px 12px 0;
+    font-size: 1.15rem;
+  }
+  .quote cite { display: block; margin-top: 0.5rem; opacity: 0.7; font-size: 0.9rem; }
+  footer { text-align: center; margin-top: 3rem; opacity: 0.6; font-size: 0.85rem; }
+</style>
+
+<div class="wrap">
+  <h1>Yeah, Baby! 🕺</h1>
+  <p class="sub">A groovy little page full of random stuff. Oh, behave!</p>
+
+  <div class="grid">
+    <div class="card">
+      <span class="emoji">🦦</span>
+      <h2>Sea Otter Fact</h2>
+      <p>Sea otters hold hands while sleeping so they don't drift apart. Smashing!</p>
+    </div>
+    <div class="card">
+      <span class="emoji">🌮</span>
+      <h2>Random Recipe</h2>
+      <p>Crispy fried chickpeas + lime + smoked paprika. Five minutes. Done.</p>
+    </div>
+    <div class="card">
+      <span class="emoji">🎷</span>
+      <h2>Now Playing</h2>
+      <p>Herbie Hancock — "Cantaloupe Island". Pure groove fuel.</p>
+    </div>
+    <div class="card">
+      <span class="emoji">🪐</span>
+      <h2>Space Bit</h2>
+      <p>A day on Venus is longer than its year. Time travel, basically.</p>
+    </div>
+    <div class="card">
+      <span class="emoji">📚</span>
+      <h2>Word of the Day</h2>
+      <p><b>Petrichor</b> — the earthy scent after rain on dry soil.</p>
+    </div>
+    <div class="card">
+      <span class="emoji">🎲</span>
+      <h2>Lucky Number</h2>
+      <p>Today's number is <b>23</b>. Use it wisely. Or don't.</p>
+    </div>
+  </div>
+
+  <blockquote class="quote">
+    "There are only two tragedies in life: one is not getting what one wants, and the other is getting it."
+    <cite>— Oscar Wilde</cite>
+  </blockquote>
+
+  <footer>Generated with minimum effort and maximum mojo. ✌️</footer>
+</div>
